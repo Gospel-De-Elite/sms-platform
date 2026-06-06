@@ -1,0 +1,275 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── ENUMS ───────────────────────────────────────────
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+}
+
+enum TransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum PaymentGateway {
+  PAYSTACK
+  MONNIFY
+}
+
+enum SenderIDStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum CampaignStatus {
+  DRAFT
+  QUEUED
+  SENDING
+  COMPLETED
+  FAILED
+}
+
+enum MessageStatus {
+  PENDING
+  SENT
+  DELIVERED
+  FAILED
+}
+
+enum SMSGateway {
+  TERMII
+  MULTITEXTER
+}
+
+// ─── MODELS ──────────────────────────────────────────
+
+model User {
+  id                String    @id @default(uuid())
+  firstName         String
+  lastName          String
+  email             String    @unique
+  password          String
+  phone             String?
+  businessName      String?
+  isVerified        Boolean   @default(false)
+  isActive          Boolean   @default(true)
+  twoFactorEnabled  Boolean   @default(false)
+  twoFactorSecret   String?
+  role              Role      @default(USER)
+  deletedAt         DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  wallet            Wallet?
+  transactions      Transaction[]
+  senderIDs         SenderID[]
+  contactGroups     ContactGroup[]
+  contacts          Contact[]
+  campaigns         Campaign[]
+  messages          Message[]
+  apiKeys           ApiKey[]
+  apiLogs           ApiLog[]
+  webhooks          Webhook[]
+  emailVerificationTokens EmailVerificationToken[]
+  passwordResetTokens     PasswordResetToken[]
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Wallet {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  balance      Decimal  @default(0) @db.Decimal(20, 2)
+  totalFunded  Decimal  @default(0) @db.Decimal(20, 2)
+  totalSpent   Decimal  @default(0) @db.Decimal(20, 2)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Transaction {
+  id             String            @id @default(uuid())
+  userId         String
+  type           TransactionType
+  amount         Decimal           @db.Decimal(20, 2)
+  balanceBefore  Decimal           @db.Decimal(20, 2)
+  balanceAfter   Decimal           @db.Decimal(20, 2)
+  description    String
+  reference      String            @unique
+  status         TransactionStatus @default(PENDING)
+  paymentGateway PaymentGateway?
+  gatewayRef     String?
+  metadata       Json?
+  createdAt      DateTime          @default(now())
+
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SenderID {
+  id              String         @id @default(uuid())
+  userId          String
+  name            String
+  status          SenderIDStatus @default(PENDING)
+  rejectionReason String?
+  isDefault       Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  campaigns       Campaign[]
+  messages        Message[]
+}
+
+model ContactGroup {
+  id          String    @id @default(uuid())
+  userId      String
+  name        String
+  description String?
+  totalCount  Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contacts    Contact[]
+}
+
+model Contact {
+  id        String        @id @default(uuid())
+  userId    String
+  groupId   String?
+  firstName String?
+  lastName  String?
+  phone     String
+  email     String?
+  isDND     Boolean       @default(false)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group     ContactGroup? @relation(fields: [groupId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, phone])
+}
+
+model Campaign {
+  id               String         @id @default(uuid())
+  userId           String
+  senderIDId       String
+  name             String
+  message          String
+  totalRecipients  Int
+  totalSent        Int            @default(0)
+  totalDelivered   Int            @default(0)
+  totalFailed      Int            @default(0)
+  totalCost        Decimal        @db.Decimal(20, 2)
+  status           CampaignStatus @default(DRAFT)
+  scheduledAt      DateTime?
+  completedAt      DateTime?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  senderID         SenderID       @relation(fields: [senderIDId], references: [id])
+  messages         Message[]
+}
+
+model Message {
+  id            String        @id @default(uuid())
+  userId        String
+  campaignId    String?
+  senderIDId    String
+  recipient     String
+  message       String
+  units         Int
+  cost          Decimal       @db.Decimal(20, 2)
+  status        MessageStatus @default(PENDING)
+  gatewayUsed   SMSGateway
+  gatewayRef    String?
+  failureReason String?
+  deliveredAt   DateTime?
+  createdAt     DateTime      @default(now())
+
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  campaign      Campaign?     @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  senderID      SenderID      @relation(fields: [senderIDId], references: [id])
+}
+
+model ApiKey {
+  id          String    @id @default(uuid())
+  userId      String
+  name        String
+  key         String    @unique
+  lastUsedAt  DateTime?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  apiLogs     ApiLog[]
+}
+
+model ApiLog {
+  id         String   @id @default(uuid())
+  userId     String
+  apiKeyId   String
+  endpoint   String
+  method     String
+  statusCode Int
+  ipAddress  String
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  apiKey     ApiKey   @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+}
+
+model Webhook {
+  id        String   @id @default(uuid())
+  userId    String
+  url       String
+  events    String[]
+  secret    String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
