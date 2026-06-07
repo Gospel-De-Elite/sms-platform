@@ -1,0 +1,25 @@
+info:
+  name: profile update
+  type: http
+  seq: 6
+
+http:
+  method: PUT
+  url: http://localhost:5000/api/user/profile
+  headers:
+    - name: Authorization
+      value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkZjFmZjNjYy05ZjBlLTRlZGUtYTU3OS1jMmI3ODcwNWJiMjIiLCJpYXQiOjE3ODA4NjQxMTksImV4cCI6MTc4MTQ2ODkxOX0.hSxZWIUpxGbZbFjwYnR28cdfDKxmrDKd_KEXAmyGTwM
+  body:
+    type: json
+    data: |-
+      {
+        "phone": "08012345678",
+        "businessName": "De Elite Digitals"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

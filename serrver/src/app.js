@@ -5,7 +5,7 @@ const morgan = require("morgan");
 const dotenv = require("dotenv");
 const errorHandler = require("./middlewares/error.middleware");
 const authRoutes = require("./routes/auth.routes");
-
+const userRoutes = require("./routes/user.routes");
 dotenv.config();
 
 const app = express();
@@ -22,6 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // ─── Routes ───────────────────────────────────────────
 app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 
 // ─── Health Check ─────────────────────────────────────
 app.get("/health", (req, res) => {
