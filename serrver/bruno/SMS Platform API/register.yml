@@ -1,0 +1,25 @@
+info:
+  name: register
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:5000/api/auth/register
+  body:
+    type: json
+    data: |-
+      {
+        "firstName": "Gospel",
+        "lastName": "Uche",
+        "email": "keguv2001@gmail.com",
+        "password": "Test1234",
+        "businessName": "De Elite Digitals"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
