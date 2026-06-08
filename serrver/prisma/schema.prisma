@@ -63,13 +63,16 @@ enum SMSGateway {
 
 // ─── MODELS ──────────────────────────────────────────
 
+
 model User {
   id                String    @id @default(uuid())
   firstName         String
   lastName          String
   email             String    @unique
-  password          String
+  password          String?   // Make nullable for Google users
+  googleId          String?   @unique
   phone             String?
+  // ... rest stays the same
   businessName      String?
   isVerified        Boolean   @default(false)
   isActive          Boolean   @default(true)

@@ -6,6 +6,9 @@ const dotenv = require("dotenv");
 const errorHandler = require("./middlewares/error.middleware");
 const authRoutes = require("./routes/auth.routes");
 const userRoutes = require("./routes/user.routes");
+const passport = require("./config/passport");
+const googleAuthRoutes = require("./routes/googleAuth.routes");
+
 dotenv.config();
 
 const app = express();
@@ -19,10 +22,11 @@ app.use(cors({
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(passport.initialize());
 // ─── Routes ───────────────────────────────────────────
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/auth", googleAuthRoutes);
 
 // ─── Health Check ─────────────────────────────────────
 app.get("/health", (req, res) => {

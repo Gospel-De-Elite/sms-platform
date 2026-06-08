@@ -41,6 +41,13 @@ const forgotPasswordController = async (req, res, next) => {
         next(error);
     }
 };
+const logoutController = async (req, res, next) => {
+    try {
+        res.status(200).json(new ApiResponse(200, "Logged out successfully"));
+    } catch (error) {
+        next(error);
+    }
+};
 
 const resetPasswordController = async (req, res, next) => {
     try {
@@ -58,4 +65,5 @@ module.exports = {
     loginController,
     forgotPasswordController,
     resetPasswordController,
+    logoutController,
 };

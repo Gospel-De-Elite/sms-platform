@@ -13,12 +13,13 @@ const {
     loginController,
     forgotPasswordController,
     resetPasswordController,
+    logoutController,
 } = require("../controllers/auth.controller");
-
+const { protect } = require("../middlewares/auth.middleware");
 router.post("/register", validate(registerSchema), registerController);
 router.post("/verify-email", verifyEmailController);
 router.post("/login", validate(loginSchema), loginController);
 router.post("/forgot-password", validate(forgotPasswordSchema), forgotPasswordController);
 router.post("/reset-password", validate(resetPasswordSchema), resetPasswordController);
-
+router.post("/logout", protect, logoutController);
 module.exports = router;
