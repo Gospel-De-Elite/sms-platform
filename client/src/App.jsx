@@ -9,7 +9,9 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import GoogleSuccess from "./pages/auth/GoogleSuccess";
 import Dashboard from "./pages/dashboard/Dashboard";
-
+import FundWallet from "./pages/wallets/FundWallet";
+import Transactions from "./pages/wallets/Transactions";
+import WalletVerify from "./pages/wallets/WalletVerify";
 // Protected Route
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuthStore();
@@ -34,6 +36,9 @@ export default function App() {
         <Route path="/reset-password" element={<PublicRoute><ResetPassword /></PublicRoute>} />
         <Route path="/auth/google/success" element={<GoogleSuccess />} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/wallet" element={<ProtectedRoute><FundWallet /></ProtectedRoute>} />
+        <Route path="/transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
+        <Route path="/wallet/verify" element={<ProtectedRoute><WalletVerify /></ProtectedRoute>} />
         {/* Default redirect */}
         <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
