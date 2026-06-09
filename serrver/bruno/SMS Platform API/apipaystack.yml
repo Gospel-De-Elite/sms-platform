@@ -1,0 +1,24 @@
+info:
+  name: apipaystack
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: http://localhost:5000/api/wallet/fund/paystack
+  headers:
+    - name: Authorization
+      value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzNjg0MjRhMS03YmRjLTRkMjUtOWRlYy0xYjg0ODNlOWNjN2UiLCJpYXQiOjE3ODA5NTE4NjUsImV4cCI6MTc4MTU1NjY2NX0.G8z3c2hTl0OzbrVX2o1q4n8UH751JZl_3Lgl4Ukw9LU
+  body:
+    type: json
+    data: |-
+      {
+        "amount":1000
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

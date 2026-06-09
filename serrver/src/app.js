@@ -8,7 +8,8 @@ const authRoutes = require("./routes/auth.routes");
 const userRoutes = require("./routes/user.routes");
 const passport = require("./config/passport");
 const googleAuthRoutes = require("./routes/googleAuth.routes");
-
+const walletRoutes = require("./routes/wallet.routes");
+const adminRoutes = require("./routes/admin.routes");
 dotenv.config();
 
 const app = express();
@@ -23,11 +24,13 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
+
 // ─── Routes ───────────────────────────────────────────
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/auth", googleAuthRoutes);
-
+app.use("/api/wallet", walletRoutes);
+app.use("/api/admin", adminRoutes);
 // ─── Health Check ─────────────────────────────────────
 app.get("/health", (req, res) => {
     res.status(200).json({
