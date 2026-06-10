@@ -22,4 +22,7 @@ router.post("/users/:userId/wallet/credit", creditUserWalletController);
 router.post("/users/:userId/wallet/debit", debitUserWalletController);
 router.get("/stats", getPlatformStatsController);
 router.put("/users/:userId/verify", verifyUserController);
+router.get("/sender-ids/pending", getPendingSenderIDsController);
+router.put("/sender-ids/:senderIDId/approve", approveSenderIDController);
+router.put("/sender-ids/:senderIDId/reject", rejectSenderIDController);
 module.exports = router;

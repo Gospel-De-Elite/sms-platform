@@ -13,6 +13,10 @@ const adminRoutes = require("./routes/admin.routes");
 const smsRoutes = require("./routes/sms.routes");
 const contactRoutes = require("./routes/contact.routes");
 const senderIDRoutes = require("./routes/senderID.routes");
+const apiKeyRoutes = require("./routes/apiKey.routes");
+const developerRoutes = require("./routes/developer.routes");
+const webhookRoutes = require("./routes/webhook.routes");
+const { authLimiter, apiLimiter, generalLimiter } = require("./middlewares/rateLimit.middleware");
 dotenv.config();
 
 const app = express();
@@ -37,9 +41,16 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/sms", smsRoutes);
 app.use("/api/contacts", contactRoutes);
 app.use("/api/sender-ids", senderIDRoutes);
-
+app.use("/api/api-keys", apiKeyRoutes);
+app.use("/v1", developerRoutes);
+app.use("/api/webhooks", webhookRoutes);
+// Apply rate limits
+app.use("/api/auth", authLimiter);
+app.use("/v1", apiLimiter);
+app.use("/api", generalLimiter);
 // Start SMS queue worker
 require("./queues/sms.worker");
+
 // ─── Health Check ─────────────────────────────────────
 app.get("/health", (req, res) => {
     res.status(200).json({

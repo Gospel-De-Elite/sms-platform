@@ -8,12 +8,13 @@ import {
     CreditCard,
     Settings,
     LogOut,
+    Tag,
 } from "lucide-react";
-
 const navItems = [
     { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
     { label: "Users", path: "/users", icon: Users },
     { label: "Transactions", path: "/transactions", icon: CreditCard },
+    { label: "Sender IDs", path: "/sender-ids", icon: Tag },
     { label: "Settings", path: "/settings", icon: Settings },
 ];
 

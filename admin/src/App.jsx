@@ -3,6 +3,7 @@ import useAuthStore from "./store/authStore";
 import AdminLogin from "./pages/auth/Login";
 import AdminDashboard from "./pages/dashboard/Dashboard";
 import Users from "./pages/users/Users";
+import SenderIDs from "./pages/senderIDs/SenderIDs";
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuthStore();
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
         <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
         <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/sender-ids" element={<ProtectedRoute><SenderIDs /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );

@@ -32,3 +32,17 @@ export const getPlatformStats = async () => {
     const response = await api.get("/admin/stats");
     return response.data;
 };
+export const getPendingSenderIDs = async () => {
+    const response = await api.get("/admin/sender-ids/pending");
+    return response.data;
+};
+
+export const approveSenderID = async (id) => {
+    const response = await api.put(`/admin/sender-ids/${id}/approve`);
+    return response.data;
+};
+
+export const rejectSenderID = async (id, data) => {
+    const response = await api.put(`/admin/sender-ids/${id}/reject`, data);
+    return response.data;
+};

@@ -17,6 +17,8 @@ import Campaigns from "./pages/sms/Campaigns";
 import Contacts from "./pages/contacts/Contacts";
 import SenderID from "./pages/senderID/SenderID";
 import Reports from "./pages/reports/Reports";
+import ApiKeys from "./pages/api/ApiKeys";
+import Settings from "./pages/settings/Settings";
 // Protected Route
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuthStore();
@@ -51,6 +53,8 @@ export default function App() {
         {/* Default redirect */}
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+        <Route path="/api-keys" element={<ProtectedRoute><ApiKeys /></ProtectedRoute>} />
+        <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );

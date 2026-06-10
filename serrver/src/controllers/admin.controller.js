@@ -203,3 +203,22 @@ module.exports = {
     getPlatformStatsController,
     verifyUserController,
 };
+const getPendingSenderIDsController = async (req, res, next) => {
+    try {
+        const senderIDs = await prisma.senderID.findMany({
+            where: { status: "PENDING" },
+            orderBy: { createdAt: "desc" },
+            include: {
+                user: {
+                    select: { firstName: true, lastName: true, email: true },
+                },
+            },
+        });
+
+        res.status(200).json(
+            new ApiResponse(200, "Pending sender IDs fetched", senderIDs)
+        );
+    } catch (error) {
+        next(error);
+    }
+};
