@@ -146,11 +146,69 @@ const getMessagesController = async (req, res, next) => {
         next(error);
     }
 };
+const getReportsController = async (req, res, next) => {
+    try {
+        const userId = req.user.id;
 
+        const [
+            totalMessages,
+            totalDelivered,
+            totalFailed,
+            totalCampaigns,
+            recentMessages,
+            dailyStats,
+        ] = await Promise.all([
+            prisma.message.count({ where: { userId } }),
+            prisma.message.count({ where: { userId, status: "DELIVERED" } }),
+            prisma.message.count({ where: { userId, status: "FAILED" } }),
+            prisma.campaign.count({ where: { userId } }),
+            prisma.message.findMany({
+                where: { userId },
+                orderBy: { createdAt: "desc" },
+                take: 10,
+                include: { senderID: true },
+            }),
+            prisma.$queryRaw`
+        SELECT 
+          DATE(created_at) as date,
+          COUNT(*) as total,
+          SUM(CASE WHEN status = 'DELIVERED' THEN 1 ELSE 0 END) as delivered,
+          SUM(CASE WHEN status = 'FAILED' THEN 1 ELSE 0 END) as failed
+        FROM messages
+        WHERE user_id = ${userId}
+        AND created_at >= NOW() - INTERVAL '7 days'
+        GROUP BY DATE(created_at)
+        ORDER BY date ASC
+      `,
+        ]);
+
+        const deliveryRate = totalMessages > 0
+            ? ((totalDelivered / totalMessages) * 100).toFixed(1)
+            : 0;
+
+        res.status(200).json(
+            new ApiResponse(200, "Reports fetched successfully", {
+                summary: {
+                    totalMessages,
+                    totalDelivered,
+                    totalFailed,
+                    totalCampaigns,
+                    deliveryRate,
+                },
+                recentMessages,
+                dailyStats,
+            })
+        );
+    } catch (error) {
+        next(error);
+    }
+};
+// In sms.controller.js exports
 module.exports = {
     sendSingleController,
     sendBulkController,
     getCampaignsController,
     getCampaignMessagesController,
     getMessagesController,
+    getReportsController,
 };

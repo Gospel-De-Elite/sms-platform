@@ -16,6 +16,7 @@ import SendSMS from "./pages/sms/SendSMS";
 import Campaigns from "./pages/sms/Campaigns";
 import Contacts from "./pages/contacts/Contacts";
 import SenderID from "./pages/senderID/SenderID";
+import Reports from "./pages/reports/Reports";
 // Protected Route
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuthStore();
@@ -49,6 +50,7 @@ export default function App() {
         <Route path="/sender-id" element={<ProtectedRoute><SenderID /></ProtectedRoute>} />
         {/* Default redirect */}
         <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );

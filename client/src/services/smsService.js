@@ -24,3 +24,7 @@ export const getCampaignMessages = async (campaignId) => {
   const response = await api.get(`/sms/campaigns/${campaignId}/messages`);
   return response.data;
 };
+export const getReports = async () => {
+  const response = await api.get("/sms/reports");
+  return response.data;
+};
