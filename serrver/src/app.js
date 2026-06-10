@@ -10,6 +10,9 @@ const passport = require("./config/passport");
 const googleAuthRoutes = require("./routes/googleAuth.routes");
 const walletRoutes = require("./routes/wallet.routes");
 const adminRoutes = require("./routes/admin.routes");
+const smsRoutes = require("./routes/sms.routes");
+const contactRoutes = require("./routes/contact.routes");
+const senderIDRoutes = require("./routes/senderID.routes");
 dotenv.config();
 
 const app = express();
@@ -31,6 +34,12 @@ app.use("/api/user", userRoutes);
 app.use("/api/auth", googleAuthRoutes);
 app.use("/api/wallet", walletRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/sms", smsRoutes);
+app.use("/api/contacts", contactRoutes);
+app.use("/api/sender-ids", senderIDRoutes);
+
+// Start SMS queue worker
+require("./queues/sms.worker");
 // ─── Health Check ─────────────────────────────────────
 app.get("/health", (req, res) => {
     res.status(200).json({

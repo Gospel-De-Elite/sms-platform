@@ -3,26 +3,18 @@ import { Link, useLocation } from "react-router-dom";
 import { useLogout } from "../hooks/useLogout";
 import useAuthStore from "../store/authStore";
 import {
-  LayoutDashboard,
-  MessageSquare,
-  Users,
-  Wallet,
-  BarChart2,
-  Settings,
-  LogOut,
-  Menu,
-  X,
-  CreditCard,
-  Key,
+  LayoutDashboard, MessageSquare, Send, Users, Wallet,
+  BarChart2, Settings, LogOut, Menu, X, CreditCard, Key, Tag,
 } from "lucide-react";
-
 const navItems = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
   { label: "Send SMS", path: "/sms", icon: MessageSquare },
+  { label: "Campaigns", path: "/campaigns", icon: Send },
   { label: "Contacts", path: "/contacts", icon: Users },
   { label: "Wallet", path: "/wallet", icon: Wallet },
   { label: "Transactions", path: "/transactions", icon: CreditCard },
   { label: "Reports", path: "/reports", icon: BarChart2 },
+  { label: "Sender IDs", path: "/sender-id", icon: Tag },
   { label: "API Keys", path: "/api-keys", icon: Key },
   { label: "Settings", path: "/settings", icon: Settings },
 ];

@@ -12,6 +12,10 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import FundWallet from "./pages/wallets/FundWallet";
 import Transactions from "./pages/wallets/Transactions";
 import WalletVerify from "./pages/wallets/WalletVerify";
+import SendSMS from "./pages/sms/SendSMS";
+import Campaigns from "./pages/sms/Campaigns";
+import Contacts from "./pages/contacts/Contacts";
+import SenderID from "./pages/senderID/SenderID";
 // Protected Route
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuthStore();
@@ -39,6 +43,10 @@ export default function App() {
         <Route path="/wallet" element={<ProtectedRoute><FundWallet /></ProtectedRoute>} />
         <Route path="/transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
         <Route path="/wallet/verify" element={<ProtectedRoute><WalletVerify /></ProtectedRoute>} />
+        <Route path="/sms" element={<ProtectedRoute><SendSMS /></ProtectedRoute>} />
+        <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
+        <Route path="/contacts" element={<ProtectedRoute><Contacts /></ProtectedRoute>} />
+        <Route path="/sender-id" element={<ProtectedRoute><SenderID /></ProtectedRoute>} />
         {/* Default redirect */}
         <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
