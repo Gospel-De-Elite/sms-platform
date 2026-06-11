@@ -13,6 +13,7 @@ const {
     getPendingSenderIDsController,
     approveSenderIDController,
     rejectSenderIDController,
+    getAllTransactionsController,
 } = require("../controllers/admin.controller");
 
 // All admin routes require auth + admin role
@@ -28,4 +29,5 @@ router.put("/users/:userId/verify", verifyUserController);
 router.get("/sender-ids/pending", getPendingSenderIDsController);
 router.put("/sender-ids/:senderIDId/approve", approveSenderIDController);
 router.put("/sender-ids/:senderIDId/reject", rejectSenderIDController);
+router.get("/transactions", getAllTransactionsController);
 module.exports = router;

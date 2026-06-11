@@ -242,7 +242,41 @@ const rejectSenderIDController = async (req, res, next) => {
         next(error);
     }
 };
+const getAllTransactionsController = async (req, res, next) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 20;
+        const skip = (page - 1) * limit;
 
+        const [transactions, total] = await Promise.all([
+            prisma.transaction.findMany({
+                skip,
+                take: limit,
+                orderBy: { createdAt: "desc" },
+                include: {
+                    user: {
+                        select: { firstName: true, lastName: true, email: true },
+                    },
+                },
+            }),
+            prisma.transaction.count(),
+        ]);
+
+        res.status(200).json(
+            new ApiResponse(200, "Transactions fetched successfully", {
+                transactions,
+                pagination: {
+                    page,
+                    limit,
+                    total,
+                    totalPages: Math.ceil(total / limit),
+                },
+            })
+        );
+    } catch (error) {
+        next(error);
+    }
+};
 module.exports = {
     getUsersController,
     getUserByIdController,
@@ -254,4 +288,5 @@ module.exports = {
     getPendingSenderIDsController,
     approveSenderIDController,
     rejectSenderIDController,
+    getAllTransactionsController,
 };

@@ -4,6 +4,8 @@ import AdminLogin from "./pages/auth/Login";
 import AdminDashboard from "./pages/dashboard/Dashboard";
 import Users from "./pages/users/Users";
 import SenderIDs from "./pages/senderIDs/SenderIDs";
+import Transactions from "./pages/transactions/Transactions";
+import AdminSettings from "./pages/settings/Settings";
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuthStore();
@@ -24,6 +26,8 @@ export default function App() {
         <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/sender-ids" element={<ProtectedRoute><SenderIDs /></ProtectedRoute>} />
+        <Route path="/transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
+        <Route path="/settings" element={<ProtectedRoute><AdminSettings /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );
