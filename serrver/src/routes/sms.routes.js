@@ -7,6 +7,7 @@ const {
     getCampaignsController,
     getCampaignMessagesController,
     getMessagesController,
+    getReportsController,
 } = require("../controllers/sms.controller");
 
 router.post("/send", protect, sendSingleController);

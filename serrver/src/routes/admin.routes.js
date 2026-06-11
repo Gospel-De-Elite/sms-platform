@@ -10,6 +10,9 @@ const {
     debitUserWalletController,
     getPlatformStatsController,
     verifyUserController,
+    getPendingSenderIDsController,
+    approveSenderIDController,
+    rejectSenderIDController,
 } = require("../controllers/admin.controller");
 
 // All admin routes require auth + admin role

@@ -193,16 +193,6 @@ const verifyUserController = async (req, res, next) => {
         next(error);
     }
 };
-
-module.exports = {
-    getUsersController,
-    getUserByIdController,
-    toggleUserStatusController,
-    creditUserWalletController,
-    debitUserWalletController,
-    getPlatformStatsController,
-    verifyUserController,
-};
 const getPendingSenderIDsController = async (req, res, next) => {
     try {
         const senderIDs = await prisma.senderID.findMany({
@@ -221,4 +211,47 @@ const getPendingSenderIDsController = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
+};
+
+const approveSenderIDController = async (req, res, next) => {
+    try {
+        const senderID = await prisma.senderID.update({
+            where: { id: req.params.senderIDId },
+            data: { status: "APPROVED" },
+        });
+
+        res.status(200).json(
+            new ApiResponse(200, "Sender ID approved successfully", senderID)
+        );
+    } catch (error) {
+        next(error);
+    }
+};
+
+const rejectSenderIDController = async (req, res, next) => {
+    try {
+        const senderID = await prisma.senderID.update({
+            where: { id: req.params.senderIDId },
+            data: { status: "REJECTED" },
+        });
+
+        res.status(200).json(
+            new ApiResponse(200, "Sender ID rejected successfully", senderID)
+        );
+    } catch (error) {
+        next(error);
+    }
+};
+
+module.exports = {
+    getUsersController,
+    getUserByIdController,
+    toggleUserStatusController,
+    creditUserWalletController,
+    debitUserWalletController,
+    getPlatformStatsController,
+    verifyUserController,
+    getPendingSenderIDsController,
+    approveSenderIDController,
+    rejectSenderIDController,
 };
