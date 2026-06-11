@@ -17,6 +17,7 @@ const apiKeyRoutes = require("./routes/apiKey.routes");
 const developerRoutes = require("./routes/developer.routes");
 const webhookRoutes = require("./routes/webhook.routes");
 const { authLimiter, apiLimiter, generalLimiter } = require("./middlewares/rateLimit.middleware");
+const providerWebhookRoutes = require("./routes/providerWebhook.routes");
 dotenv.config();
 
 const app = express();
@@ -44,6 +45,7 @@ app.use("/api/sender-ids", senderIDRoutes);
 app.use("/api/api-keys", apiKeyRoutes);
 app.use("/v1", developerRoutes);
 app.use("/api/webhooks", webhookRoutes);
+app.use("/api/webhooks/provider", providerWebhookRoutes);
 // Apply rate limits
 app.use("/api/auth", authLimiter);
 app.use("/v1", apiLimiter);

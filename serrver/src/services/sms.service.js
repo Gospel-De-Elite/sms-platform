@@ -32,47 +32,64 @@ const calculateCost = (units) => units * COST_PER_UNIT;
 
 // ─── Send Single SMS ──────────────────────────────────
 const sendSingleSMS = async (userId, { to, senderIDId, message }) => {
-    // Verify sender ID
+    console.log("📨 SMS Send Attempt:", { userId, to, senderIDId });
+
     const senderID = await prisma.senderID.findFirst({
         where: { id: senderIDId, userId, status: "APPROVED" },
     });
-    if (!senderID) throw new ApiError(400, "Invalid or unapproved sender ID");
 
-    // Calculate cost
+    if (!senderID) {
+        console.log("❌ Sender ID not found or not approved");
+        throw new ApiError(400, "Invalid or unapproved sender ID");
+    }
+
+    console.log("✅ Sender ID found:", senderID.name);
+
     const units = calculateUnits(message);
     const cost = calculateCost(units);
 
-    // Check wallet balance
+    console.log("💰 Cost calculation:", { units, cost });
+
     const wallet = await prisma.wallet.findUnique({ where: { userId } });
+    console.log("👛 Wallet balance:", wallet?.balance);
+
     if (!wallet || parseFloat(wallet.balance) < cost) {
+        console.log("❌ Insufficient balance");
         throw new ApiError(400, "Insufficient wallet balance");
     }
 
-    // Select gateway
     const gateway = getGateway(process.env.PRIMARY_SMS_GATEWAY || "TERMII");
+    console.log("🔌 Using gateway:", process.env.PRIMARY_SMS_GATEWAY || "TERMII");
 
     let gatewayRef = null;
     let status = "FAILED";
     let failureReason = null;
 
     try {
+        console.log("📤 Sending via primary gateway...");
         const result = await gateway.sendSingle(to, senderID.name, message);
         gatewayRef = result.gatewayRef;
         status = "SENT";
+        console.log("✅ Primary gateway success:", result);
     } catch (error) {
-        // Try fallback gateway
+        console.log("❌ Primary gateway failed:", error.message);
+        console.log("❌ Gateway error details:", error.response?.data);
+
         try {
+            console.log("📤 Trying fallback gateway (Multitexter)...");
             const fallback = getGateway("MULTITEXTER");
             const result = await fallback.sendSingle(to, senderID.name, message);
             gatewayRef = result.gatewayRef;
             status = "SENT";
+            console.log("✅ Fallback gateway success:", result);
         } catch (fallbackError) {
-            failureReason = fallbackError.message;
+            console.log("❌ Fallback gateway also failed:", fallbackError.message);
+            console.log("❌ Fallback error details:", fallbackError.response?.data);
+            failureReason = `Primary: ${error.message} | Fallback: ${fallbackError.message}`;
             status = "FAILED";
         }
     }
 
-    // Record message
     const msg = await prisma.message.create({
         data: {
             userId,
@@ -88,14 +105,15 @@ const sendSingleSMS = async (userId, { to, senderIDId, message }) => {
         },
     });
 
-    // Debit wallet only if sent successfully
+    console.log("💾 Message recorded:", { id: msg.id, status: msg.status, failureReason: msg.failureReason });
+
     if (status === "SENT") {
         await debitWallet(userId, cost, `SMS to ${to}`);
+        console.log("✅ Wallet debited:", cost);
     }
 
     return msg;
 };
-
 // ─── Send Bulk SMS ────────────────────────────────────
 const sendBulkSMS = async (userId, { recipients, senderIDId, message, campaignName }) => {
     const senderID = await prisma.senderID.findFirst({
