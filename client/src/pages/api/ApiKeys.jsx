@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { Plus, Trash2, Copy, Eye, EyeOff, Key } from "lucide-react";
 import DashboardLayout from "../../layouts/DashboardLayout";
-import { getApiKeys, createApiKey, deleteApiKey } from "../../services/apiKeyService";
+import { getApiKeys, createApiKey, deleteApiKey } from "../../services/apikeyService";
 import dayjs from "dayjs";
 
 export default function ApiKeys() {
