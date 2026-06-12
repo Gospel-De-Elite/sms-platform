@@ -25,7 +25,27 @@ const app = express();
 // ─── Core Middleware ──────────────────────────────────
 app.use(helmet());
 app.use(cors({
-    origin: [process.env.CLIENT_URL, process.env.ADMIN_URL],
+    origin: function (origin, callback) {
+        // Allow requests with no origin (mobile apps, curl, Postman)
+        if (!origin) return callback(null, true);
+
+        const allowedOrigins = [
+            process.env.CLIENT_URL,
+            process.env.ADMIN_URL,
+            "http://localhost:5173",
+            "http://localhost:5174",
+        ];
+
+        // Allow any vercel.app subdomain for your project
+        if (
+            allowedOrigins.includes(origin) ||
+            origin.endsWith(".vercel.app")
+        ) {
+            return callback(null, true);
+        }
+
+        return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
 }));
 app.use(morgan("dev"));
