@@ -153,7 +153,7 @@ export default function Register() {
                         {/* Google Button */}
                         <button
                             type="button"
-                            onClick={() => window.location.href = "http://localhost:5000/api/auth/google"}
+                           onClick={() => window.location.href = `${import.meta.env.VITE_API_BASE_URL.replace("/api", "")}/api/auth/google`}
                             className="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-medium rounded-lg py-2.5 text-sm transition flex items-center justify-center gap-2"
                         >
                             <svg className="w-4 h-4" viewBox="0 0 24 24">
