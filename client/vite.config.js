@@ -26,5 +26,15 @@ export default defineConfig({
   plugins: [react()],
   build: {
     outDir: 'dist',
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          query: ['@tanstack/react-query'],
+          ui: ['lucide-react', 'recharts'],
+        },
+      },
+    },
   },
 })
