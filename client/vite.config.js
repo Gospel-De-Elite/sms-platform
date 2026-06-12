@@ -22,19 +22,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+//  Just let Vite handle it natively
 export default defineConfig({
-  plugins: [react()],
   build: {
-    outDir: 'dist',
-    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          query: ['@tanstack/react-query'],
-          ui: ['lucide-react', 'recharts'],
-        },
-      },
-    },
-  },
+        // Remove or comment out manualChunks entirely
+      }
+    }
+  }
 })
