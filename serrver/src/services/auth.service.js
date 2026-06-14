@@ -10,16 +10,13 @@ const dayjs = require("dayjs");
 const register = async (data) => {
     const { firstName, lastName, email, password, phone, businessName } = data;
 
-    // Check if email already exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
         throw new ApiError(409, "An account with this email already exists");
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create user and wallet in a transaction
     const user = await prisma.$transaction(async (tx) => {
         const newUser = await tx.user.create({
             data: {
@@ -32,7 +29,6 @@ const register = async (data) => {
             },
         });
 
-        // Auto create wallet for new user
         await tx.wallet.create({
             data: { userId: newUser.id },
         });
@@ -40,7 +36,6 @@ const register = async (data) => {
         return newUser;
     });
 
-    // Generate OTP and save
     const otp = generateOTP();
     const expiresAt = dayjs().add(10, "minutes").toDate();
 
@@ -52,8 +47,10 @@ const register = async (data) => {
         },
     });
 
-    // Send verification email
-    await sendVerificationEmail(user.email, user.firstName, otp);
+    // Send email without blocking — log error if it fails
+    sendVerificationEmail(user.email, user.firstName, otp).catch((err) => {
+        console.error("Failed to send verification email:", err.message);
+    });
 
     return {
         id: user.id,
@@ -62,7 +59,6 @@ const register = async (data) => {
         email: user.email,
     };
 };
-
 // ─── Verify Email ─────────────────────────────────────
 const verifyEmail = async (email, otp) => {
     const user = await prisma.user.findUnique({ where: { email } });
@@ -138,7 +134,7 @@ const forgotPassword = async (email) => {
 
     await sendPasswordResetEmail(user.email, user.firstName, otp);
 
-    return { message: "If this email exists you will receive a reset code" };
+    return { message: "If this email exists you will receive a reset code" }
 };
 
 // ─── Reset Password ───────────────────────────────────
