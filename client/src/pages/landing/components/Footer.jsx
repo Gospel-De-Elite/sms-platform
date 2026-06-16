@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Twitter, Linkedin, Youtube, Github } from "lucide-react";
+import { X, Linkedin, Youtube, Github } from "lucide-react";
 
 export default function Footer() {
     return (
@@ -18,7 +18,7 @@ export default function Footer() {
                         </p>
                         <div className="flex items-center gap-3">
                             {[
-                                { icon: Twitter, href: "#" },
+                                { icon: X, href: "#" },
                                 { icon: Linkedin, href: "#" },
                                 { icon: Youtube, href: "#" },
                                 { icon: Github, href: "#" },
