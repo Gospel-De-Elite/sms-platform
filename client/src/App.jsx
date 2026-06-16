@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import useAuthStore from "./store/authStore";
-
+import LandingPage from "./pages/landing/LandingPage";
+import AboutUs from "./pages/landing/AboutUs";
 // Auth Pages
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
@@ -36,6 +37,8 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         {/* Public Routes */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/about" element={<AboutUs />} />
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
         <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
         <Route path="/verify-email" element={<VerifyEmail />} />
@@ -51,7 +54,7 @@ export default function App() {
         <Route path="/contacts" element={<ProtectedRoute><Contacts /></ProtectedRoute>} />
         <Route path="/sender-id" element={<ProtectedRoute><SenderID /></ProtectedRoute>} />
         {/* Default redirect */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
         <Route path="/api-keys" element={<ProtectedRoute><ApiKeys /></ProtectedRoute>} />
         <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
