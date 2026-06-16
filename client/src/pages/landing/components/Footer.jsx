@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Twitter, Linkedin, Facebook, Instagram } from "lucide-react";
+import { Twitter, Linkedin, Youtube, Github } from "lucide-react";
 
 export default function Footer() {
     return (
@@ -20,12 +20,11 @@ export default function Footer() {
                             {[
                                 { icon: Twitter, href: "#" },
                                 { icon: Linkedin, href: "#" },
-                                { icon: Facebook, href: "#" },
-                                { icon: Instagram, href: "#" },
+                                { icon: Youtube, href: "#" },
+                                { icon: Github, href: "#" },
                             ].map(({ icon: Icon, href }, i) => (
-
-                                key = { i },
-                                < a
+                                <a
+                                    key={i}
                                     href={href}
                                     className="w-8 h-8 bg-slate-800 hover:bg-slate-700 rounded-lg flex items-center justify-center text-slate-400 hover:text-white transition"
                                 >
