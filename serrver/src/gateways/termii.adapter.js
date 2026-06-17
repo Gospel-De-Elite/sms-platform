@@ -14,11 +14,11 @@ class TermiiAdapter extends SMSGatewayInterface {
     try {
       const response = await axios.post(`${this.baseUrl}/api/sms/send`, {
         to,
-        from,
+        from: from || "N-Alert", // fallback to generic sender
         sms: message,
         type: "plain",
         api_key: this.apiKey,
-        channel: this.channel,
+        channel: "dnd", // use dnd channel for better delivery
       });
 
       return {
@@ -38,11 +38,11 @@ class TermiiAdapter extends SMSGatewayInterface {
     try {
       const response = await axios.post(`${this.baseUrl}/api/sms/send/bulk`, {
         to: recipients.map((r) => r.to),
-        from,
+        from: from || "N-Alert",
         sms: message,
         type: "plain",
         api_key: this.apiKey,
-        channel: this.channel,
+        channel: this.channel || "dnd",
       });
 
       return recipients.map((r, index) => ({

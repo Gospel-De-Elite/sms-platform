@@ -52,14 +52,19 @@ export default function SendSMS() {
   const recipientCount = mode === "single"
     ? (formData.to ? 1 : 0)
     : selectedGroup
-    ? contacts.length
-    : manualNumbers.split("\n").filter((n) => n.trim()).length;
+      ? contacts.length
+      : manualNumbers.split("\n").filter((n) => n.trim()).length;
   const totalCost = units * costPerUnit * recipientCount;
 
   const singleMutation = useMutation({
     mutationFn: sendSingleSMS,
-    onSuccess: () => {
-      toast.success("SMS sent successfully!");
+    onSuccess: (response) => {
+      const messageStatus = response.data.status;
+      if (messageStatus === "SENT") {
+        toast.success("SMS sent successfully!");
+      } else {
+        toast.error(`SMS failed: ${response.data.failureReason || "Unknown error"}`);
+      }
       queryClient.invalidateQueries({ queryKey: ["wallet"] });
       setFormData({ ...formData, to: "", message: "" });
     },
@@ -67,7 +72,6 @@ export default function SendSMS() {
       toast.error(error.response?.data?.message || "Failed to send SMS");
     },
   });
-
   const bulkMutation = useMutation({
     mutationFn: sendBulkSMS,
     onSuccess: () => {
@@ -132,21 +136,19 @@ export default function SendSMS() {
         <div className="flex bg-slate-900 border border-slate-800 rounded-xl p-1 mb-6 w-fit">
           <button
             onClick={() => setMode("single")}
-            className={`px-6 py-2 rounded-lg text-sm font-medium transition ${
-              mode === "single"
+            className={`px-6 py-2 rounded-lg text-sm font-medium transition ${mode === "single"
                 ? "bg-blue-600 text-white"
                 : "text-slate-400 hover:text-white"
-            }`}
+              }`}
           >
             Single SMS
           </button>
           <button
             onClick={() => setMode("bulk")}
-            className={`px-6 py-2 rounded-lg text-sm font-medium transition ${
-              mode === "bulk"
+            className={`px-6 py-2 rounded-lg text-sm font-medium transition ${mode === "bulk"
                 ? "bg-blue-600 text-white"
                 : "text-slate-400 hover:text-white"
-            }`}
+              }`}
           >
             Bulk SMS
           </button>
@@ -276,8 +278,8 @@ export default function SendSMS() {
                 {isPending
                   ? "Sending..."
                   : mode === "single"
-                  ? "Send SMS"
-                  : `Send to ${recipientCount} recipient${recipientCount !== 1 ? "s" : ""}`
+                    ? "Send SMS"
+                    : `Send to ${recipientCount} recipient${recipientCount !== 1 ? "s" : ""}`
                 }
               </button>
             </div>

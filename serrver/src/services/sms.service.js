@@ -226,5 +226,5 @@ const processCampaign = async (campaignId, recipients) => {
         },
     });
 };
-
+// Only debit if actually sent
 module.exports = { sendSingleSMS, sendBulkSMS, processCampaign, calculateUnits, calculateCost };
