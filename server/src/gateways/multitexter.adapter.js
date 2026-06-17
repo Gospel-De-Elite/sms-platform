@@ -20,12 +20,21 @@ class MultitexterAdapter extends SMSGatewayInterface {
                 recipients: to,
             });
 
+            // Multitexter returns status: -2 (or similar negative codes) on failure
+            if (response.data.status < 0) {
+                throw new ApiError(
+                    500,
+                    `Multitexter rejected message: ${response.data.msg || "Unknown error"}`
+                );
+            }
+
             return {
                 gatewayRef: response.data.messageid || `MT_${Date.now()}`,
                 status: "SENT",
                 raw: response.data,
             };
         } catch (error) {
+            if (error instanceof ApiError) throw error;
             throw new ApiError(
                 500,
                 `Multitexter send failed: ${error.response?.data?.message || error.message}`
@@ -45,12 +54,20 @@ class MultitexterAdapter extends SMSGatewayInterface {
                 recipients: recipientList,
             });
 
+            if (response.data.status < 0) {
+                throw new ApiError(
+                    500,
+                    `Multitexter rejected bulk message: ${response.data.msg || "Unknown error"}`
+                );
+            }
+
             return recipients.map((r, index) => ({
                 to: r.to,
                 gatewayRef: `MT_${Date.now()}_${index}`,
                 status: "SENT",
             }));
         } catch (error) {
+            if (error instanceof ApiError) throw error;
             throw new ApiError(
                 500,
                 `Multitexter bulk send failed: ${error.response?.data?.message || error.message}`
